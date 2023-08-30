@@ -14,10 +14,12 @@ public class Quiz : MonoBehaviour
     [Header("Answers")]
     [SerializeField] GameObject[] answerButtons;
     int correctAnswerIndex;
-    bool hasAnsweredEarly;
+    bool hasAnsweredEarly=true;
     [Header("Button Colors")]
     [SerializeField] Sprite defaultAnswerSprite;
     [SerializeField] Sprite correctAnswerSprite;
+    [SerializeField] Sprite wrongAnswerSprite;
+
     [Header("Timer")]
     [SerializeField] Image timerImage;
     Timer timer;
@@ -27,11 +29,13 @@ public class Quiz : MonoBehaviour
     [Header("Slider")]
     [SerializeField] Slider progressBar;
     public bool isComplete;
+    SoundEffects sound;
 
     void Awake()
     {
         timer=FindObjectOfType<Timer>();
         scoreKeeper=FindObjectOfType<ScoreKeeper>();
+        sound=FindObjectOfType<SoundEffects>();
         progressBar.maxValue=questions.Count;
         progressBar.value=0;  
     }
@@ -51,8 +55,9 @@ public class Quiz : MonoBehaviour
         }
         else if (!hasAnsweredEarly && !timer.isAnsweringQuestion)
         {
-            DisplayCorrectAnswer(-1);
             SetButtonState(false);
+            DisplayCorrectAnswer(-1);
+            
         }
     }
 
@@ -68,21 +73,29 @@ public class Quiz : MonoBehaviour
 
     void DisplayCorrectAnswer(int index)
     {
-        if (index==currentQuestion.GetCorrectAnswerIndex())
+        if (index==currentQuestion.GetCorrectAnswerIndex()&&hasAnsweredEarly)
         {
             questionText.text="Correct Answer!";
+            sound.CorrectPlay();
             Image buttonImage=answerButtons[index].GetComponent<Image>();
             buttonImage.sprite=correctAnswerSprite;
             scoreKeeper.IncrementCorrectAnswers();
         }
         else 
         {
+            
             correctAnswerIndex=currentQuestion.GetCorrectAnswerIndex();
             string correctAnswer=currentQuestion.GetAnswer(correctAnswerIndex);            
             questionText.text="Sorry the correct answer was:\n"+ correctAnswer;
-            
-            Image buttonImage=answerButtons[correctAnswerIndex].GetComponent<Image>();
-            buttonImage.sprite=correctAnswerSprite;
+            sound.WrongPlay();
+
+            Image buttonImageCorrect=answerButtons[correctAnswerIndex].GetComponent<Image>();
+            buttonImageCorrect.sprite=correctAnswerSprite;
+            if(hasAnsweredEarly)
+            {  
+                Image buttonImageWrong=answerButtons[index].GetComponent<Image>();
+                buttonImageWrong.sprite=wrongAnswerSprite;
+            }
         }
     }
        
