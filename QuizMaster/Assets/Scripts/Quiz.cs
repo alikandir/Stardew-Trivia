@@ -41,6 +41,7 @@ public class Quiz : MonoBehaviour
     }
     void Update()
     {
+        
         timerImage.fillAmount = timer.fillFraction;
         if(timer.loadNextQuestion)
         {
@@ -56,8 +57,7 @@ public class Quiz : MonoBehaviour
         else if (!hasAnsweredEarly && !timer.isAnsweringQuestion)
         {
             SetButtonState(false);
-            DisplayCorrectAnswer(-1);
-            
+            DisplayCorrectAnswer(-1); 
         }
     }
 

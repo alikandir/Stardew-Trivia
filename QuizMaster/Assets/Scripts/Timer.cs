@@ -6,14 +6,23 @@ public class Timer : MonoBehaviour
 {
     [SerializeField] float timeToCompleteQuestion=30f;
     [SerializeField] float timeToShowCorrectAnswer=10f;
+    Quiz quiz;
     public bool isAnsweringQuestion=true;
     public float fillFraction;
     public bool loadNextQuestion;
 
     float timerValue;
+    void Awake()
+    {
+        quiz=FindObjectOfType<Quiz>();
+    }
     void Update()
     {
-        UpdateTimer();
+        if(quiz.gameObject.activeInHierarchy)
+        {
+            UpdateTimer();
+        }
+        
     }
     public void CancelTimer()
     {
